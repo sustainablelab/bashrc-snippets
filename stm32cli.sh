@@ -20,7 +20,7 @@ export firmware="/home/mike/work/radlabs/gitrepos/arm-workspace/"
 # Usage : cd $firmware; ls # see the repos; cd display-a/; cd $build
 export build="BUILD/XDOT_L151CC/ARMC6"
 #
-# Usage : now invoke stm32cli
+# Usage : now invoke stm32cli or use an stm32cli_ alias below
 #
 # # Read (all) 256KB (262144 bytes) of Flash into ~/flash.hex:
 # stm32cli -c port=SWD freq=8000 mode=UR -r 0x08000000 0x40000 ~/flash.hex
@@ -30,3 +30,24 @@ export build="BUILD/XDOT_L151CC/ARMC6"
 #
 # # Write display-a.bin to Flash, then restart the processor
 # stm32cli -c port=SWD freq=8000 mode=UR -d display-a.bin 0x08000000 -s 0x08000000
+
+# Test communication with STLINKV3
+# Also useful to RESET the processor
+alias stm32cli_reset='stm32cli -c port=SWD freq=8000 mode=UR'
+
+# Write a .bin to Flash
+# Usage: cd into folder with `.bin` then `stm32cli_flash bob.bin`
+#
+function stm32cli_flash() {
+    if [ $# == 0 ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
+    then
+        echo "Usage:"
+        echo "  cd \$firmware"
+        echo "  cd sensors-a"
+        echo "  cd \$build"
+        echo "  ls *.bin"
+        echo "  stm32cli_flash sensors-a.bin"
+    else
+        stm32cli -c port=SWD freq=8000 mode=UR -d $1 0x08000000 -s 0x08000000
+    fi
+}
